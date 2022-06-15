@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
+import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import {
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
+import SplitButton from "./SplitButton";
+import { features } from "./features";
 
-function App() {
+export default function App() {
+  const [feature, setFeature] = React.useState(features[0]);
+
+  let navigate = useNavigate();
+
+  const onSelectFeature = (index: number) => {
+    setFeature(features[index]);
+    navigate(features[index].path, {replace: true});
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <>
+      <Box sx={{flexGrow: 1}}>
+        <AppBar position="static">
+          <Toolbar>
+            <SplitButton options={features} onSelect={onSelectFeature}/>
+          </Toolbar>
+        </AppBar>
 
-export default App;
+      </Box>
+
+      <Routes>
+        {features.map(feature => (
+          <Route key={feature.name} element={<feature.component/>} path={feature.path}/>
+        ))}
+      </Routes>
+    </>
+  );
+
+}
